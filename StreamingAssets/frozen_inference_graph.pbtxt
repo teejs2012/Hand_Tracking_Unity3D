@@ -1,0 +1,3614 @@
+node {
+  name: "image_tensor"
+  op: "Placeholder"
+  attr {
+    key: "dtype"
+    value {
+      type: DT_UINT8
+    }
+  }
+  attr {
+    key: "shape"
+    value {
+      shape {
+        dim {
+          size: -1
+        }
+        dim {
+          size: -1
+        }
+        dim {
+          size: -1
+        }
+        dim {
+          size: 3
+        }
+      }
+    }
+  }
+}
+node {
+  name: "Preprocessor/mul"
+  op: "Mul"
+  input: "image_tensor"
+  input: "Preprocessor/mul/x"
+}
+node {
+  name: "Preprocessor/sub"
+  op: "Sub"
+  input: "Preprocessor/mul"
+  input: "Preprocessor/sub/y"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_0/Conv2D"
+  op: "Conv2D"
+  input: "Preprocessor/sub"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_0/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 2
+        i: 2
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_0/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_0/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_0/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_0/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_0/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_0/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_0/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_0/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_0/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_1_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_1_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 2
+        i: 2
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_2_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_2_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_3_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_3_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 2
+        i: 2
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_4_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_4_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_5_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_5_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 2
+        i: 2
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_6_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_6_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_7_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_7_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_8_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_8_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_9_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_9_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_10_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_10_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_11_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "BoxPredictor_0/ClassPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_pointwise/Relu6"
+  input: "BoxPredictor_0/ClassPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_0/ClassPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_0/ClassPredictor/Conv2D"
+  input: "BoxPredictor_0/ClassPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "BoxPredictor_0/BoxEncodingPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_pointwise/Relu6"
+  input: "BoxPredictor_0/BoxEncodingPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "loc_pred_transposed"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_0/BoxEncodingPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_0/BoxEncodingPredictor/Conv2D"
+  input: "BoxPredictor_0/BoxEncodingPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_11_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 2
+        i: 2
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_12_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_depthwise/depthwise"
+  op: "DepthwiseConv2dNative"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_12_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_depthwise/depthwise_weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_depthwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_depthwise/depthwise"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_depthwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_depthwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_depthwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_depthwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_depthwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_depthwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_pointwise/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_depthwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_pointwise/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_pointwise/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_pointwise/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_pointwise/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "BoxPredictor_1/ClassPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_pointwise/Relu6"
+  input: "BoxPredictor_1/ClassPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_1/ClassPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_1/ClassPredictor/Conv2D"
+  input: "BoxPredictor_1/ClassPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "BoxPredictor_1/BoxEncodingPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_pointwise/Relu6"
+  input: "BoxPredictor_1/BoxEncodingPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "loc_pred_transposed"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_1/BoxEncodingPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_1/BoxEncodingPredictor/Conv2D"
+  input: "BoxPredictor_1/BoxEncodingPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/MobilenetV1/Conv2d_13_pointwise/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_2_1x1_256/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 2
+        i: 2
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "BoxPredictor_2/ClassPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/Relu6"
+  input: "BoxPredictor_2/ClassPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_2/ClassPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_2/ClassPredictor/Conv2D"
+  input: "BoxPredictor_2/ClassPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "BoxPredictor_2/BoxEncodingPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/Relu6"
+  input: "BoxPredictor_2/BoxEncodingPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "loc_pred_transposed"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_2/BoxEncodingPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_2/BoxEncodingPredictor/Conv2D"
+  input: "BoxPredictor_2/BoxEncodingPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_2_3x3_s2_512/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_3_1x1_128/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 2
+        i: 2
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "BoxPredictor_3/ClassPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/Relu6"
+  input: "BoxPredictor_3/ClassPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_3/ClassPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_3/ClassPredictor/Conv2D"
+  input: "BoxPredictor_3/ClassPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "BoxPredictor_3/BoxEncodingPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/Relu6"
+  input: "BoxPredictor_3/BoxEncodingPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "loc_pred_transposed"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_3/BoxEncodingPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_3/BoxEncodingPredictor/Conv2D"
+  input: "BoxPredictor_3/BoxEncodingPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_3_3x3_s2_256/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_4_1x1_128/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 2
+        i: 2
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "BoxPredictor_4/ClassPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/Relu6"
+  input: "BoxPredictor_4/ClassPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_4/ClassPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_4/ClassPredictor/Conv2D"
+  input: "BoxPredictor_4/ClassPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "BoxPredictor_4/BoxEncodingPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/Relu6"
+  input: "BoxPredictor_4/BoxEncodingPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "loc_pred_transposed"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_4/BoxEncodingPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_4/BoxEncodingPredictor/Conv2D"
+  input: "BoxPredictor_4/BoxEncodingPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_4_3x3_s2_256/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_1_Conv2d_5_1x1_64/Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 2
+        i: 2
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/BatchNorm/FusedBatchNorm"
+  op: "FusedBatchNorm"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/BatchNorm/gamma"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/BatchNorm/beta"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/BatchNorm/moving_mean"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/BatchNorm/moving_variance"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "epsilon"
+    value {
+      f: 0.001
+    }
+  }
+}
+node {
+  name: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/Relu6"
+  op: "Relu6"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/BatchNorm/FusedBatchNorm"
+}
+node {
+  name: "BoxPredictor_5/ClassPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/Relu6"
+  input: "BoxPredictor_5/ClassPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_5/ClassPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_5/ClassPredictor/Conv2D"
+  input: "BoxPredictor_5/ClassPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "BoxPredictor_5/BoxEncodingPredictor/Conv2D"
+  op: "Conv2D"
+  input: "FeatureExtractor/MobilenetV1/Conv2d_13_pointwise_2_Conv2d_5_3x3_s2_128/Relu6"
+  input: "BoxPredictor_5/BoxEncodingPredictor/weights"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+  attr {
+    key: "dilations"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+  attr {
+    key: "loc_pred_transposed"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "padding"
+    value {
+      s: "SAME"
+    }
+  }
+  attr {
+    key: "strides"
+    value {
+      list {
+        i: 1
+        i: 1
+        i: 1
+        i: 1
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_5/BoxEncodingPredictor/BiasAdd"
+  op: "BiasAdd"
+  input: "BoxPredictor_5/BoxEncodingPredictor/Conv2D"
+  input: "BoxPredictor_5/BoxEncodingPredictor/biases"
+  attr {
+    key: "data_format"
+    value {
+      s: "NHWC"
+    }
+  }
+}
+node {
+  name: "concat/axis_flatten"
+  op: "Const"
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        int_val: -1
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "BoxPredictor_0/ClassPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_0/ClassPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_1/ClassPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_1/ClassPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_2/ClassPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_2/ClassPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_3/ClassPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_3/ClassPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_4/ClassPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_4/ClassPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_5/ClassPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_5/ClassPredictor/BiasAdd"
+}
+node {
+  name: "ClassPredictor/concat"
+  op: "ConcatV2"
+  input: "BoxPredictor_0/ClassPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_1/ClassPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_2/ClassPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_3/ClassPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_4/ClassPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_5/ClassPredictor/BiasAdd/Flatten"
+  input: "concat/axis_flatten"
+}
+node {
+  name: "BoxPredictor_0/BoxEncodingPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_0/BoxEncodingPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_1/BoxEncodingPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_1/BoxEncodingPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_2/BoxEncodingPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_2/BoxEncodingPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_3/BoxEncodingPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_3/BoxEncodingPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_4/BoxEncodingPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_4/BoxEncodingPredictor/BiasAdd"
+}
+node {
+  name: "BoxPredictor_5/BoxEncodingPredictor/BiasAdd/Flatten"
+  op: "Flatten"
+  input: "BoxPredictor_5/BoxEncodingPredictor/BiasAdd"
+}
+node {
+  name: "BoxEncodingPredictor/concat"
+  op: "ConcatV2"
+  input: "BoxPredictor_0/BoxEncodingPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_1/BoxEncodingPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_2/BoxEncodingPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_3/BoxEncodingPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_4/BoxEncodingPredictor/BiasAdd/Flatten"
+  input: "BoxPredictor_5/BoxEncodingPredictor/BiasAdd/Flatten"
+  input: "concat/axis_flatten"
+}
+node {
+  name: "PriorBox_0"
+  op: "PriorBox"
+  input: "BoxPredictor_0/BoxEncodingPredictor/BiasAdd"
+  input: "image_tensor"
+  attr {
+    key: "clip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "flip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "height"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 30.0
+        float_val: 42.42640687119285
+        float_val: 84.8528137423857
+        tensor_shape {
+          dim {
+            size: 3
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "variance"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 0.1
+        float_val: 0.1
+        float_val: 0.2
+        float_val: 0.2
+        tensor_shape {
+          dim {
+            size: 4
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "width"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 30.0
+        float_val: 84.85281374238572
+        float_val: 42.42640687119286
+        tensor_shape {
+          dim {
+            size: 3
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "PriorBox_1"
+  op: "PriorBox"
+  input: "BoxPredictor_1/BoxEncodingPredictor/BiasAdd"
+  input: "image_tensor"
+  attr {
+    key: "clip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "flip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "height"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 105.0
+        float_val: 74.24621202458748
+        float_val: 148.49242404917496
+        float_val: 60.62177826491071
+        float_val: 181.87442874352365
+        float_val: 125.49900398011134
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "variance"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 0.1
+        float_val: 0.1
+        float_val: 0.2
+        float_val: 0.2
+        tensor_shape {
+          dim {
+            size: 4
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "width"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 105.0
+        float_val: 148.49242404917499
+        float_val: 74.24621202458749
+        float_val: 181.8653347947321
+        float_val: 60.618747100216446
+        float_val: 125.49900398011134
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "PriorBox_2"
+  op: "PriorBox"
+  input: "BoxPredictor_2/BoxEncodingPredictor/BiasAdd"
+  input: "image_tensor"
+  attr {
+    key: "clip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "flip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "height"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 150.0
+        float_val: 106.06601717798212
+        float_val: 212.13203435596424
+        float_val: 86.60254037844388
+        float_val: 259.8206124907481
+        float_val: 171.0263137648707
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "variance"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 0.1
+        float_val: 0.1
+        float_val: 0.2
+        float_val: 0.2
+        tensor_shape {
+          dim {
+            size: 4
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "width"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 150.0
+        float_val: 212.13203435596427
+        float_val: 106.06601717798213
+        float_val: 259.8076211353316
+        float_val: 86.59821014316636
+        float_val: 171.0263137648707
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "PriorBox_3"
+  op: "PriorBox"
+  input: "BoxPredictor_3/BoxEncodingPredictor/BiasAdd"
+  input: "image_tensor"
+  attr {
+    key: "clip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "flip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "height"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 195.0
+        float_val: 137.88582233137677
+        float_val: 275.77164466275354
+        float_val: 112.58330249197702
+        float_val: 337.7667962379726
+        float_val: 216.33307652783938
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "variance"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 0.1
+        float_val: 0.1
+        float_val: 0.2
+        float_val: 0.2
+        tensor_shape {
+          dim {
+            size: 4
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "width"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 195.0
+        float_val: 275.77164466275354
+        float_val: 137.88582233137677
+        float_val: 337.749907475931
+        float_val: 112.57767318611627
+        float_val: 216.33307652783938
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "PriorBox_4"
+  op: "PriorBox"
+  input: "BoxPredictor_4/BoxEncodingPredictor/BiasAdd"
+  input: "image_tensor"
+  attr {
+    key: "clip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "flip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "height"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 240.0
+        float_val: 169.7056274847714
+        float_val: 339.4112549695428
+        float_val: 138.5640646055102
+        float_val: 415.71297998519697
+        float_val: 261.5339366124404
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "variance"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 0.1
+        float_val: 0.1
+        float_val: 0.2
+        float_val: 0.2
+        tensor_shape {
+          dim {
+            size: 4
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "width"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 240.0
+        float_val: 339.4112549695429
+        float_val: 169.70562748477144
+        float_val: 415.69219381653056
+        float_val: 138.55713622906617
+        float_val: 261.5339366124404
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "PriorBox_5"
+  op: "PriorBox"
+  input: "BoxPredictor_5/BoxEncodingPredictor/BiasAdd"
+  input: "image_tensor"
+  attr {
+    key: "clip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "flip"
+    value {
+      b: false
+    }
+  }
+  attr {
+    key: "height"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 285.0
+        float_val: 201.52543263816602
+        float_val: 403.05086527633205
+        float_val: 164.54482671904336
+        float_val: 493.6591637324214
+        float_val: 292.4038303442689
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "variance"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 0.1
+        float_val: 0.1
+        float_val: 0.2
+        float_val: 0.2
+        tensor_shape {
+          dim {
+            size: 4
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "width"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        float_val: 285.0
+        float_val: 403.0508652763321
+        float_val: 201.52543263816605
+        float_val: 493.63448015713
+        float_val: 164.53659927201608
+        float_val: 292.4038303442689
+        tensor_shape {
+          dim {
+            size: 6
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "PriorBox/concat"
+  op: "ConcatV2"
+  input: "PriorBox_0"
+  input: "PriorBox_1"
+  input: "PriorBox_2"
+  input: "PriorBox_3"
+  input: "PriorBox_4"
+  input: "PriorBox_5"
+  input: "concat/axis_flatten"
+}
+node {
+  name: "ClassPredictor/concat/sigmoid"
+  op: "Sigmoid"
+  input: "ClassPredictor/concat"
+}
+node {
+  name: "detection_out"
+  op: "DetectionOutput"
+  input: "BoxEncodingPredictor/concat"
+  input: "ClassPredictor/concat/sigmoid"
+  input: "PriorBox/concat"
+  attr {
+    key: "background_label_id"
+    value {
+      i: 0
+    }
+  }
+  attr {
+    key: "code_type"
+    value {
+      s: "CENTER_SIZE"
+    }
+  }
+  attr {
+    key: "confidence_threshold"
+    value {
+      f: 0.01
+    }
+  }
+  attr {
+    key: "keep_top_k"
+    value {
+      i: 100
+    }
+  }
+  attr {
+    key: "nms_threshold"
+    value {
+      f: 0.6
+    }
+  }
+  attr {
+    key: "num_classes"
+    value {
+      i: 2
+    }
+  }
+  attr {
+    key: "share_location"
+    value {
+      b: true
+    }
+  }
+  attr {
+    key: "top_k"
+    value {
+      i: 100
+    }
+  }
+}
