@@ -1,3 +1,4 @@
+Please refer to [this medium post](https://medium.com/@teejs2012/hand-tracking-in-unity3d-f741a5e21a92) for the detailed illustration for this project.
 # Pre-requisite
 OpenCVForUnity plugin is needed for this project. Please download and import this plugin from Unity Asset Store.
 # Usage
